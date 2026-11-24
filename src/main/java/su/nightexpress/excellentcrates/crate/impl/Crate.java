@@ -3,7 +3,6 @@ package su.nightexpress.excellentcrates.crate.impl;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -51,6 +50,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -106,7 +106,7 @@ public class Crate implements ConfigBacked {
 
         this.costMap = new LinkedHashMap<>();
         this.rewardMap = new LinkedHashMap<>();
-        this.blockPositions = new HashSet<>();
+        this.blockPositions = ConcurrentHashMap.newKeySet();
         this.milestones = new HashSet<>();
         this.description = new ArrayList<>();
     }
@@ -219,11 +219,16 @@ public class Crate implements ConfigBacked {
             this.addCost(cost);
         });
 
-        this.blockPositions.addAll(config.getStringList("Block.Positions").stream().map(WorldPos::deserialize).toList());
+        List<WorldPos> positions = config.getStringList("Block.Positions").stream().map(WorldPos::deserialize).toList();
+        this.blockPositions.addAll(positions);
         if (!Config.isCrateInAirBlocksAllowed()) {
-            this.blockPositions.removeIf(pos -> {
-                Block block = pos.toBlock();
-                return block != null && block.isEmpty();
+            positions.forEach(pos -> {
+                Location location = pos.toLocation();
+                if (location == null) return;
+
+                this.plugin.runAt(location, () -> {
+                    if (location.getBlock().isEmpty()) this.blockPositions.remove(pos);
+                });
             });
         }
 

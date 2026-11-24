@@ -258,15 +258,17 @@ public class BaseCommands {
         boolean mass = context.hasFlag(CommandFlags.MASS);
         CrateSource source = new CrateSource(crate);
 
-        Cost cost = force ? null : crate.getAnyCost(player).orElse(null);
-        OpenOptions options = force ? OpenOptions.ignoreRestrictions() : OpenOptions.empty();
+        plugin.runFor(player, () -> {
+            Cost cost = force ? null : crate.getAnyCost(player).orElse(null);
+            OpenOptions options = force ? OpenOptions.ignoreRestrictions() : OpenOptions.empty();
 
-        if (mass) {
-            plugin.getCrateManager().multiOpenCrate(player, source, options, cost, cost == null ? 1 : cost.countMaxOpenings(player));
-        }
-        else {
-            plugin.getCrateManager().openCrate(player, source, options, cost);
-        }
+            if (mass) {
+                plugin.getCrateManager().multiOpenCrate(player, source, options, cost, cost == null ? 1 : cost.countMaxOpenings(player));
+            }
+            else {
+                plugin.getCrateManager().openCrate(player, source, options, cost);
+            }
+        });
         return true;
     }
 
@@ -278,7 +280,7 @@ public class BaseCommands {
             return false;
         }
 
-        plugin.getCrateManager().previewCrate(player, new CrateSource(crate));
+        plugin.runFor(player, () -> plugin.getCrateManager().previewCrate(player, new CrateSource(crate)));
 
         if (context.getSender() != player) {
             Lang.COMMAND_PREVIEW_DONE_OTHERS.message().send(context.getSender(), replacer -> replacer

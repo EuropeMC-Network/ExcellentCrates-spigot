@@ -47,7 +47,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
         this.loadCost();
         this.loadKeys();
         this.loadDialogs();
-        this.plugin.runTask(task -> this.reportProblems()); // When everything is loaded.
+        this.plugin.runTask(() -> this.reportProblems()); // When everything is loaded.
 
         this.addListener(new KeyListener(this.plugin, this));
         this.addAsyncTask(this::saveKeys, Config.CRATE_SAVE_INTERVAL.get()); // TODO Config
@@ -133,7 +133,8 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
         World world = location.getWorld();
         if (world == null) return false;
 
-        world.dropItemNaturally(location, key.getItemStack());
+        ItemStack itemStack = key.getItemStack();
+        this.plugin.runAt(location, () -> world.dropItemNaturally(location, itemStack));
         return true;
     }
 
@@ -227,7 +228,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
     public void setKey(@NotNull CrateUser user, @NotNull CrateKey key, int amount) {
         Player player = user.getPlayer();
         if (player != null) {
-            this.setKey(player, key, amount);
+            this.plugin.runFor(player, () -> this.setKey(player, key, amount));
             return;
         }
 
@@ -258,7 +259,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
     public void giveKey(@NotNull CrateUser user, @NotNull CrateKey key, int amount) {
         Player player = user.getPlayer();
         if (player != null) {
-            this.giveKey(player, key, amount);
+            this.plugin.runFor(player, () -> this.giveKey(player, key, amount));
             return;
         }
 
@@ -286,7 +287,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
     public void takeKey(@NotNull CrateUser user, @NotNull CrateKey key, int amount) {
         Player player = user.getPlayer();
         if (player != null) {
-            this.takeKey(player, key, amount);
+            this.plugin.runFor(player, () -> this.takeKey(player, key, amount));
             return;
         }
 

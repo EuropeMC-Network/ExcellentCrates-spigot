@@ -78,7 +78,7 @@ public class OpeningCostMenu extends LinkedMenu<CratesPlugin, CrateSource> imple
                 .setPriority(Integer.MAX_VALUE)
                 .setSlots(slot)
                 .setHandler((viewer1, event) -> {
-                    this.runNextTick(() -> {
+                    this.plugin.runTask(viewer1.getPlayer(), () -> {
                         if (maxOpenings > 1 && Config.isMassOpenEnabled()) {
                             this.manager.openAmountMenu(player, source, cost);
                             return;

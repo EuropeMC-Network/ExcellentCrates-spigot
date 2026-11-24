@@ -24,6 +24,7 @@ import su.nightexpress.nightcore.util.Plugins;
 import su.nightexpress.nightcore.util.placeholder.Replacer;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HologramManager extends AbstractManager<CratesPlugin> {
 
@@ -33,7 +34,7 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
 
     public HologramManager(@NotNull CratesPlugin plugin) {
         super(plugin);
-        this.displayMap = new HashMap<>();
+        this.displayMap = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -211,21 +212,26 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
         double lineGap = Config.CRATE_HOLOGRAM_LINE_GAP.get();
 
         crate.getBlockPositions().forEach(blockPos -> {
-            Block block = blockPos.toBlock();
-            if (block == null) return;
+            Location blockLocation = blockPos.toLocation();
+            if (blockLocation == null) return;
 
-            double height = block.getBoundingBox().getHeight() / 2D + yOffset;
+            this.plugin.runAt(blockLocation, () -> {
+                Block block = blockLocation.getBlock();
+                double height = block.getBoundingBox().getHeight() / 2D + yOffset;
 
-            // Allocate ID values for our fake entities, so there is no clash with new server entities.
+                // Allocate ID values for our fake entities, so there is no clash with new server entities.
 
-            FakeEntityGroup group = display.getGroupOrCreate(blockPos);
+                FakeEntityGroup group = new FakeEntityGroup(blockPos);
 
-            for (int index = 0; index < originText.size(); index++) {
-                double gap = lineGap * index;
+                for (int index = 0; index < originText.size(); index++) {
+                    double gap = lineGap * index;
 
-                Location location = LocationUtil.setCenter3D(block.getLocation()).add(0, height + gap, 0);
-                group.addEntity(FakeEntity.create(location));
-            }
+                    Location location = LocationUtil.setCenter3D(block.getLocation()).add(0, height + gap, 0);
+                    group.addEntity(FakeEntity.create(location));
+                }
+
+                display.addGroup(group);
+            });
         });
 
         this.displayMap.put(crate.getId(), display);

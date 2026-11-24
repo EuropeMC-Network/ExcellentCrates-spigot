@@ -129,9 +129,13 @@ public class SimpleRollOpening extends WorldOpening {
     protected void onStop() {
         this.addReward(this.reward);
 
-        if (this.rewardDisplay != null) {
-            this.rewardDisplay.remove();
-            this.rewardDisplay = null;
+        if (this.displayLocation != null) {
+            this.plugin.runAt(this.displayLocation, () -> {
+                if (this.rewardDisplay != null) {
+                    this.rewardDisplay.remove();
+                    this.rewardDisplay = null;
+                }
+            });
         }
 
         Block block = this.source.getBlock();
@@ -157,31 +161,34 @@ public class SimpleRollOpening extends WorldOpening {
     }
 
     private void displayReward() {
-        Reward reward = this.isSpinsCompleted() ? this.reward : this.crate.rollReward(this.player);
+        boolean completed = this.isSpinsCompleted();
+        Reward reward = completed ? this.reward : this.crate.rollReward(this.player);
 
-        if (this.rewardDisplay == null) {
-            this.rewardDisplay = player.getWorld().spawn(this.displayLocation, Item.class, item -> item.setVelocity(new Vector()));
-            this.rewardDisplay.setPersistent(false);
-            this.rewardDisplay.setCustomNameVisible(true);
-            this.rewardDisplay.setGravity(false);
-            this.rewardDisplay.setPickupDelay(Integer.MAX_VALUE);
-            this.rewardDisplay.setUnlimitedLifetime(true);
-            this.rewardDisplay.setInvulnerable(true);
-            //this.rewardDisplay.setBillboard(Display.Billboard.CENTER);
-            //this.rewardDisplay.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(), new Vector3f(0.35f, 0.35f, 0.35f), new AxisAngle4f()));
-        }
-        if (this.rewardDisplay != null) {
-            ItemStack itemStack = reward.getPreviewItem();
-            this.rewardDisplay.setItemStack(itemStack);
-            EntityUtil.setCustomName(this.rewardDisplay, reward.getName());
-        }
+        this.plugin.runAt(this.displayLocation, () -> {
+            if (this.rewardDisplay == null) {
+                this.rewardDisplay = this.displayLocation.getWorld().spawn(this.displayLocation, Item.class, item -> item.setVelocity(new Vector()));
+                this.rewardDisplay.setPersistent(false);
+                this.rewardDisplay.setCustomNameVisible(true);
+                this.rewardDisplay.setGravity(false);
+                this.rewardDisplay.setPickupDelay(Integer.MAX_VALUE);
+                this.rewardDisplay.setUnlimitedLifetime(true);
+                this.rewardDisplay.setInvulnerable(true);
+                //this.rewardDisplay.setBillboard(Display.Billboard.CENTER);
+                //this.rewardDisplay.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(), new Vector3f(0.35f, 0.35f, 0.35f), new AxisAngle4f()));
+            }
+            if (this.rewardDisplay != null) {
+                ItemStack itemStack = reward.getPreviewItem();
+                this.rewardDisplay.setItemStack(itemStack);
+                EntityUtil.setCustomName(this.rewardDisplay, reward.getName());
+            }
 
-        VanillaSound.of(Sound.UI_BUTTON_CLICK, 0.5f).play(this.displayLocation);
-        VanillaSound.of(Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f).play(this.displayLocation);
+            VanillaSound.of(Sound.UI_BUTTON_CLICK, 0.5f).play(this.displayLocation);
+            VanillaSound.of(Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f).play(this.displayLocation);
 
-        if (this.isSpinsCompleted()) {
-            VanillaSound.of(Sound.ENTITY_GENERIC_EXPLODE, 0.7f).play(this.displayLocation);
-            OpeningUtils.createFirework(this.displayLocation);
-        }
+            if (completed) {
+                VanillaSound.of(Sound.ENTITY_GENERIC_EXPLODE, 0.7f).play(this.displayLocation);
+                OpeningUtils.createFirework(this.displayLocation);
+            }
+        });
     }
 }

@@ -72,7 +72,7 @@ public class CratesMenu extends ConfigMenu<CratesPlugin> {
                 InteractType clickAction = null;//Config.getCrateClickAction(clickType);
                 if (clickAction == null) return;
 
-                this.runNextTick(() -> {
+                this.plugin.runTask(viewer1.getPlayer(), () -> {
                     player.closeInventory();
                     plugin.getCrateManager().interactCrate(player, crate, clickAction, null, null);
                 });

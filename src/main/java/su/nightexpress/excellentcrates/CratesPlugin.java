@@ -1,5 +1,7 @@
 package su.nightexpress.excellentcrates;
 
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.api.addon.CratesAddon;
 import su.nightexpress.excellentcrates.command.BaseCommands;
@@ -26,6 +28,7 @@ import su.nightexpress.nightcore.config.PluginDetails;
 import su.nightexpress.nightcore.integration.item.ItemBridge;
 import su.nightexpress.nightcore.integration.item.ItemProviderKeys;
 import su.nightexpress.nightcore.util.Plugins;
+import su.nightexpress.nightcore.util.Version;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -154,6 +157,24 @@ public class CratesPlugin extends NightPlugin {
 
     private void loadCommands() {
         this.rootCommand = NightCommand.forPlugin(this, builder -> new BaseCommands(this).load(builder));
+    }
+
+    public void runFor(@NotNull Entity entity, @NotNull Runnable runnable) {
+        if (Version.isFolia() && this.isEnabled()) {
+            this.runTask(entity, runnable);
+        }
+        else {
+            runnable.run();
+        }
+    }
+
+    public void runAt(@NotNull Location location, @NotNull Runnable runnable) {
+        if (Version.isFolia() && this.isEnabled()) {
+            this.runTask(location, runnable);
+        }
+        else {
+            runnable.run();
+        }
     }
 
     public void registerAddon(@NotNull CratesAddon addon) {

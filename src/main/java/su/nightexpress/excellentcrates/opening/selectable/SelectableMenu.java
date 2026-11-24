@@ -84,7 +84,7 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
                     opening.addSelectedReward(reward);
                     this.selectSound.play(player);
                 }
-                this.runNextTick(() -> this.flush(viewer));
+                this.plugin.runTask(viewer1.getPlayer(), () -> this.flush(viewer));
             })
             .build();
     }
