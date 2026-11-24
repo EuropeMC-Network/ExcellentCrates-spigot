@@ -1,0 +1,13 @@
+[versions]
+spigot = "1.21.10-R0.1-SNAPSHOT"
+nightcore = "2.16.6"
+protocollib = "5.3.0"
+packetevents = "2.10.1"
+placeholderapi = "2.11.6"
+
+[libraries]
+spigot = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }
+nightcore = { module = "su.nightexpress.nightcore:main", version.ref = "nightcore" }
+protocollib = { module = "net.dmulloy2:ProtocolLib", version.ref = "protocollib" }
+packetevents = { module = "com.github.retrooper:packetevents-spigot", version.ref = "packetevents" }
+placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholderapi" }
