@@ -81,7 +81,7 @@ public abstract class AbstractReward implements Reward {
     @Override
     public void write(@NotNull FileConfig config, @NotNull String path) {
         config.set(path + ".Type", this.getType().name());
-        config.set(path + ".PreviewData", this.preview);
+        ItemHelper.write(config, path + ".PreviewData", this.preview);
         config.set(path + ".Weight", this.weight);
         config.set(path + ".Rarity", this.rarity.getId());
         config.set(path + ".Broadcast", this.broadcast);

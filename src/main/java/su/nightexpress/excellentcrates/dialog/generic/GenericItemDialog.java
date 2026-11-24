@@ -47,7 +47,7 @@ public abstract class GenericItemDialog<T> extends Dialog<GenericItemDialog.Data
         ItemStack itemStack = data.itemStack;
         ItemMeta meta = itemStack.getItemMeta();
         AdaptedItem adaptedItem = ItemHelper.adapt(itemStack);
-        boolean isCustom = !adaptedItem.getAdapter().isVanilla();
+        boolean isCustom = !ItemHelper.isVanilla(adaptedItem);
 
         List<WrappedDialogInput> inputs = new ArrayList<>();
 

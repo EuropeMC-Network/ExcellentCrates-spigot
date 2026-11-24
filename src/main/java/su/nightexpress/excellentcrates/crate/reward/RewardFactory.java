@@ -29,7 +29,7 @@ public class RewardFactory {
             if (previewItem == null) previewItem = new ItemStack(Material.BARRIER);
 
             AdaptedItem item = ItemHelper.vanilla(previewItem);
-            config.set(path + ".PreviewData", item);
+            ItemHelper.write(config, path + ".PreviewData", item);
             config.remove(path + ".Preview");
         }
         // ------- CONVERT ITEM - END -------

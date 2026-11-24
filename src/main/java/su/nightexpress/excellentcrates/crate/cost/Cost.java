@@ -62,7 +62,7 @@ public class Cost implements Writeable {
     public void write(@NotNull FileConfig config, @NotNull String path) {
         config.set(path + ".Enabled", this.enabled);
         config.set(path + ".Name", this.name);
-        config.set(path + ".Icon", this.icon);
+        ItemHelper.write(config, path + ".Icon", this.icon);
         config.remove(path + ".Entries");
         for (int i = 0; i < this.entries.size(); i++) {
             config.set(path + ".Entries." + i, this.entries.get(i));

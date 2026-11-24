@@ -82,7 +82,7 @@ public class RewardCreationDialog extends Dialog<RewardCreationDialog.Data> {
         Crate crate = data.crate;
         ItemStack itemStack = data.itemStack;
         AdaptedItem adaptedItem = ItemHelper.adapt(itemStack);
-        boolean isCustom = !adaptedItem.getAdapter().isVanilla();
+        boolean isCustom = !ItemHelper.isVanilla(adaptedItem);
 
         List<WrappedDialogInput> inputs = new ArrayList<>();
         List<WrappedActionButton> buttons = new ArrayList<>();

@@ -10,7 +10,6 @@ import su.nightexpress.nightcore.bridge.dialog.wrap.WrappedDialog;
 import su.nightexpress.nightcore.bridge.dialog.wrap.input.WrappedDialogInput;
 import su.nightexpress.nightcore.bridge.dialog.wrap.input.text.WrappedMultilineOptions;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
-import su.nightexpress.nightcore.bridge.item.ItemAdapter;
 import su.nightexpress.nightcore.locale.entry.TextLocale;
 import su.nightexpress.nightcore.ui.dialog.Dialogs;
 import su.nightexpress.nightcore.ui.dialog.build.*;
@@ -46,7 +45,6 @@ public abstract class GenericDescriptionDialog<T> extends Dialog<T> {
         List<WrappedDialogInput> inputs = new ArrayList<>();
 
         AdaptedItem crateItem = this.getItem(source);
-        ItemAdapter<?> itemAdapter = crateItem.getAdapter();
 
         inputs.add(DialogInputs.text(JSON_DESCRIPTION, Lang.DIALOG_GENERIC_DESCRIPTION_INPUT_DESC)
             .initial(String.join("\n", this.getDescription(source)))
@@ -57,7 +55,7 @@ public abstract class GenericDescriptionDialog<T> extends Dialog<T> {
         );
 
         // It makes no sense to replace custom item's name.
-        if (itemAdapter.isVanilla() && crateItem.isValid()) {
+        if (ItemHelper.isVanilla(crateItem) && crateItem.isValid()) {
             inputs.add(DialogInputs.bool(JSON_REPLACE_LORE, Lang.DIALOG_GENERIC_DESCRIPTION_INPUT_REPLACE_LORE).build());
         }
 

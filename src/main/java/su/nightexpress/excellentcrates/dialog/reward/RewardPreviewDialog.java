@@ -64,7 +64,7 @@ public class RewardPreviewDialog extends Dialog<RewardPreviewDialog.Data> {
         ItemStack itemStack = data.itemStack;
         ItemMeta meta = itemStack.getItemMeta();
         AdaptedItem adaptedItem = ItemHelper.adapt(itemStack);
-        boolean isCustom = !adaptedItem.getAdapter().isVanilla();
+        boolean isCustom = !ItemHelper.isVanilla(adaptedItem);
 
         List<WrappedDialogInput> inputs = new ArrayList<>();
 

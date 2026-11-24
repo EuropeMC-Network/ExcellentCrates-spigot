@@ -44,7 +44,7 @@ public class ItemReward extends AbstractReward {
                 if (itemStack == null) return;
 
                 AdaptedItem provider = ItemHelper.vanilla(itemStack);
-                config.set(path + ".ItemsData." + count++, provider);
+                ItemHelper.write(config, path + ".ItemsData." + count++, provider);
             }
             config.remove(path + ".Items");
         }
@@ -71,7 +71,7 @@ public class ItemReward extends AbstractReward {
 
         int count = 0;
         for (AdaptedItem provider : this.items) {
-            config.set(path + ".ItemsData." + count++, provider);
+            ItemHelper.write(config, path + ".ItemsData." + count++, provider);
         }
     }
 

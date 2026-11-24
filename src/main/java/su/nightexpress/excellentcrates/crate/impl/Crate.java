@@ -140,7 +140,7 @@ public class Crate implements ConfigBacked {
         if (config.contains("Item")) {
             ItemStack itemStack = config.getCosmeticItem("Item").getItemStack();
             AdaptedItem provider = ItemHelper.vanilla(itemStack);
-            config.set("ItemProvider", provider);
+            ItemHelper.write(config, "ItemProvider", provider);
             config.remove("Item");
         }
         if (!config.contains("Preview")) {
@@ -273,7 +273,7 @@ public class Crate implements ConfigBacked {
     private void writeSettings(@NotNull FileConfig config) {
         config.set("Name", this.name);
         config.set("Description", this.description);
-        config.set("ItemProvider", this.item);
+        ItemHelper.write(config, "ItemProvider", this.item);
         config.set("ItemStackable", this.itemStackable);
         config.set("Permission_Required", this.permissionRequired);
 

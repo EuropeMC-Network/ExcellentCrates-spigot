@@ -3,14 +3,11 @@ package su.nightexpress.excellentcrates.util;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.nightcore.bridge.item.AdaptedItem;
-import su.nightexpress.nightcore.bridge.item.ItemAdapter;
 import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.integration.item.ItemBridge;
-import su.nightexpress.nightcore.integration.item.adapter.IdentifiableItemAdapter;
-import su.nightexpress.nightcore.integration.item.data.ItemIdData;
-import su.nightexpress.nightcore.integration.item.impl.AdaptedCustomStack;
-import su.nightexpress.nightcore.integration.item.impl.AdaptedItemStack;
-import su.nightexpress.nightcore.integration.item.impl.AdaptedVanillaStack;
+import su.nightexpress.nightcore.integration.item.bukkit.BukkitItem;
+import su.nightexpress.nightcore.integration.item.codec.AdaptedItemCodec;
+import su.nightexpress.nightcore.integration.item.dummy.DummyItem;
 import su.nightexpress.nightcore.util.ItemTag;
 import su.nightexpress.nightcore.util.Version;
 
@@ -27,8 +24,6 @@ public class ItemHelper {
     public static Optional<AdaptedItem> read(@NotNull FileConfig config, @NotNull String path) {
         String oldType = config.getString(path + ".Type");
         if (oldType != null) {
-            AdaptedItem adaptedItem = null;
-
             if (oldType.equalsIgnoreCase("vanilla")) {
                 String itemTag = config.getString(path + ".ItemTag");
                 if (itemTag != null) {
@@ -39,8 +34,8 @@ public class ItemHelper {
 
                 if (config.contains(path + ".Tag")) {
                     ItemTag tag = ItemTag.read(config, path + ".Tag");
-                    adaptedItem = new AdaptedVanillaStack(tag);
                     config.remove(path + ".Tag");
+                    write(config, path, new BukkitItem(tag));
                 }
             }
             else if (oldType.equalsIgnoreCase("custom")) {
@@ -52,25 +47,22 @@ public class ItemHelper {
                 config.remove(path + ".ItemId");
                 config.remove(path + ".Amount");
 
-                ItemAdapter<?> adapter = ItemBridge.getAdapter(handlerName);
-                if (adapter instanceof IdentifiableItemAdapter identifiableItemAdapter) {
-                    adaptedItem = new AdaptedCustomStack(identifiableItemAdapter, new ItemIdData(itemId, amount));
-                }
-                else if (adapter == null) {
-                    config.set(path + ".Provider", handlerName);
-                    config.set(path + ".Data.ID", itemId);
-                    config.set(path + ".Data.Amount", amount);
-                }
+                config.set(path + ".Provider", handlerName);
+                config.set(path + ".Data.ID", itemId);
+                config.set(path + ".Data.Amount", amount);
             }
 
             config.remove(path + ".Type");
-
-            if (adaptedItem != null) {
-                config.set(path, adaptedItem);
-            }
         }
 
-        return Optional.ofNullable(AdaptedItemStack.read(config, path));
+        if (!config.contains(path + ".Provider")) return Optional.empty();
+
+        AdaptedItem item = AdaptedItemCodec.read(config, path);
+        return item instanceof DummyItem ? Optional.empty() : Optional.of(item);
+    }
+
+    public static void write(@NotNull FileConfig config, @NotNull String path, @NotNull AdaptedItem item) {
+        AdaptedItemCodec.write(config, path, item);
     }
 
     @NotNull
@@ -79,20 +71,21 @@ public class ItemHelper {
     }
 
     public static boolean isCustom(@NotNull ItemStack itemStack) {
-        ItemAdapter<?> adapter = ItemBridge.getAdapter(itemStack);
-        return adapter != null && !adapter.isVanilla();
+        return !ItemBridge.get().isBukkitOnly(itemStack);
+    }
+
+    public static boolean isVanilla(@NotNull AdaptedItem item) {
+        return item instanceof BukkitItem;
     }
 
     @NotNull
     public static AdaptedItem vanilla(@NotNull ItemStack itemStack) {
-        return AdaptedVanillaStack.of(itemStack);
+        return new BukkitItem(ItemTag.of(itemStack));
     }
 
     @NotNull
     public static AdaptedItem adapt(@NotNull ItemStack itemStack) {
-        ItemAdapter<?> adapter = ItemBridge.getAdapterOrVanilla(itemStack);
-        AdaptedItem item = adapter.adapt(itemStack).orElse(null);
-        return item == null ? vanilla(itemStack) : item;
+        return ItemBridge.get().adapt(itemStack).orElseGet(() -> vanilla(itemStack));
     }
 
     @NotNull

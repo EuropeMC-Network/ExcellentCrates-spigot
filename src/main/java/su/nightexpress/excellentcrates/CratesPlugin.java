@@ -23,6 +23,8 @@ import su.nightexpress.excellentcrates.user.UserManager;
 import su.nightexpress.nightcore.NightPlugin;
 import su.nightexpress.nightcore.commands.command.NightCommand;
 import su.nightexpress.nightcore.config.PluginDetails;
+import su.nightexpress.nightcore.integration.item.ItemBridge;
+import su.nightexpress.nightcore.integration.item.ItemProviderKeys;
 import su.nightexpress.nightcore.util.Plugins;
 
 import java.util.ArrayList;
@@ -74,6 +76,8 @@ public class CratesPlugin extends NightPlugin {
 
     @Override
     public void enable() {
+        ItemBridge.get().unregisterProvider(ItemProviderKeys.EXCELLENT_CRATES);
+
         this.crateLogger = new CrateLogger(this);
         this.dialogRegistry = new DialogRegistry(this);
 

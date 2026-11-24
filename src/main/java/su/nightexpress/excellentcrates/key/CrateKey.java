@@ -56,7 +56,7 @@ public class CrateKey implements ConfigBacked {
             AdaptedItem adaptedItem = ItemHelper.vanilla(item.getItemStack());
 
             config.remove("Item");
-            config.set("ItemData", adaptedItem);
+            ItemHelper.write(config, "ItemData", adaptedItem);
         }
 
         this.setItem(ItemHelper.read(config, "ItemData").orElse(ItemHelper.vanilla(new ItemStack(Material.TRIAL_KEY))));
@@ -78,7 +78,7 @@ public class CrateKey implements ConfigBacked {
     private void write(@NotNull FileConfig config) {
         config.set("Name", this.name);
         config.set("Virtual", this.virtual);
-        config.set("ItemData", this.item);
+        ItemHelper.write(config, "ItemData", this.item);
         config.set("ItemStackable", this.itemStackable);
     }
 
