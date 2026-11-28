@@ -152,6 +152,7 @@ public class SelectableMenu extends LinkedMenu<CratesPlugin, SelectableOpening> 
 
     @Override
     public void loadConfiguration(@NotNull FileConfig config, @NotNull MenuLoader loader) {
+        loader.addHandler(new ItemHandler(ItemHandler.CLOSE, (viewer, event) -> this.plugin.runTask(viewer.getPlayer(), viewer.getPlayer()::closeInventory)));
         this.rewardSlots = ConfigValue.create("Reward.Slots",
             new int[] {10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34}
         ).read(config);

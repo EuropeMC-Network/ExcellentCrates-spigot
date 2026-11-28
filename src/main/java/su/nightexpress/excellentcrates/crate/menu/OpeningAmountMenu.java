@@ -20,6 +20,7 @@ import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.ui.menu.MenuViewer;
 import su.nightexpress.nightcore.ui.menu.data.ConfigBased;
 import su.nightexpress.nightcore.ui.menu.data.MenuLoader;
+import su.nightexpress.nightcore.ui.menu.item.ItemHandler;
 import su.nightexpress.nightcore.ui.menu.type.LinkedMenu;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 
@@ -96,6 +97,7 @@ public class OpeningAmountMenu extends LinkedMenu<CratesPlugin, OpeningAmountMen
 
     @Override
     public void loadConfiguration(@NotNull FileConfig config, @NotNull MenuLoader loader) {
+        loader.addHandler(new ItemHandler(ItemHandler.CLOSE, (viewer, event) -> this.plugin.runTask(viewer.getPlayer(), viewer.getPlayer()::closeInventory)));
         this.slotsSingle = ConfigValue.create("Slots.Single", new int[]{11}).read(config);
         this.slotsAll = ConfigValue.create("Slots.All", new int[]{15}).read(config);
 

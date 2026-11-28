@@ -20,6 +20,7 @@ import su.nightexpress.nightcore.ui.menu.data.ConfigBased;
 import su.nightexpress.nightcore.ui.menu.data.Filled;
 import su.nightexpress.nightcore.ui.menu.data.MenuFiller;
 import su.nightexpress.nightcore.ui.menu.data.MenuLoader;
+import su.nightexpress.nightcore.ui.menu.item.ItemHandler;
 import su.nightexpress.nightcore.ui.menu.item.MenuItem;
 import su.nightexpress.nightcore.ui.menu.type.LinkedMenu;
 import su.nightexpress.nightcore.util.Lists;
@@ -138,6 +139,7 @@ public class MilestonesMenu extends LinkedMenu<CratesPlugin, CrateSource> implem
 
     @Override
     public void loadConfiguration(@NotNull FileConfig config, @NotNull MenuLoader loader) {
+        loader.addHandler(new ItemHandler(ItemHandler.CLOSE, (viewer, event) -> this.plugin.runTask(viewer.getPlayer(), viewer.getPlayer()::closeInventory)));
         this.mileCompName = ConfigValue.create("Milestones.Completed.Name",
             LIGHT_GREEN.wrap(BOLD.wrap(MILESTONE_OPENINGS + " Openings")) + " " + GRAY.wrap("(" + WHITE.wrap("Completed") + ")")
         ).read(config);

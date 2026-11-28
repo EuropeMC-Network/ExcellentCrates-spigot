@@ -120,6 +120,7 @@ public class PreviewMenu extends LinkedMenu<CratesPlugin, CrateSource> implement
 
     @Override
     public void loadConfiguration(@NotNull FileConfig config, @NotNull MenuLoader loader) {
+        loader.addHandler(new ItemHandler(ItemHandler.CLOSE, (viewer, event) -> this.plugin.runTask(viewer.getPlayer(), viewer.getPlayer()::closeInventory)));
         this.hideUnavailable = ConfigValue.create("Reward.Hide_Unavailable",
             true,
             "When enabled, displays only rewards that can be rolled out for a player."

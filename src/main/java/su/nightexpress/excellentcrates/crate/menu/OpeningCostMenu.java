@@ -20,6 +20,7 @@ import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.ui.menu.MenuViewer;
 import su.nightexpress.nightcore.ui.menu.data.ConfigBased;
 import su.nightexpress.nightcore.ui.menu.data.MenuLoader;
+import su.nightexpress.nightcore.ui.menu.item.ItemHandler;
 import su.nightexpress.nightcore.ui.menu.type.LinkedMenu;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 import su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers;
@@ -110,6 +111,7 @@ public class OpeningCostMenu extends LinkedMenu<CratesPlugin, CrateSource> imple
 
     @Override
     public void loadConfiguration(@NotNull FileConfig config, @NotNull MenuLoader loader) {
+        loader.addHandler(new ItemHandler(ItemHandler.CLOSE, (viewer, event) -> this.plugin.runTask(viewer.getPlayer(), viewer.getPlayer()::closeInventory)));
         this.slotsByCostsAmount.clear();
         for (int count = 0; count < 10; count++) {
             int amount = count + 1;

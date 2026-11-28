@@ -15,6 +15,7 @@ import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.menu.MenuOptions;
 import su.nightexpress.nightcore.menu.MenuViewer;
 import su.nightexpress.nightcore.menu.impl.ConfigMenu;
+import su.nightexpress.nightcore.menu.item.ItemHandler;
 import su.nightexpress.nightcore.menu.item.ItemOptions;
 import su.nightexpress.nightcore.menu.item.MenuItem;
 import su.nightexpress.nightcore.util.ItemReplacer;
@@ -37,6 +38,7 @@ public class CratesMenu extends ConfigMenu<CratesPlugin> {
 
     public CratesMenu(@NotNull CratesPlugin plugin, @NotNull FileConfig config) {
         super(plugin, config);
+        this.addHandler(ItemHandler.CLOSE, (viewer, event) -> this.plugin.runTask(viewer.getPlayer(), viewer.getPlayer()::closeInventory));
 
         this.load();
 
